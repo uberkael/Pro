@@ -1,0 +1,8 @@
+python -m pip install --upgrade pip
+python -m pip install numpy==1.19.3
+python -m pip install scipy
+python -m pip install scikit-image
+python -m pip install opencv-contrib-python opencv-python
+python -m pip install imutils
+python -m pip install matplotlib cmapy
+python -m pip install tensorflow tensorflow_probability tensorflow_datasets gym
