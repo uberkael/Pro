@@ -13,6 +13,9 @@ import Tracker
 
 dims = (0, 0)
 
+def creacion_ddn():
+	pass
+
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	import cv2 as cv # Solo para DEBUG
