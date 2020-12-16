@@ -86,7 +86,6 @@ def tracker(frame):
 	# OpenCV GPU
 	img = cv.UMat(frame)
 	objetivos = identifica_objetivos(contornos)
-	Utiles.dibuja_contornos(img, objetivos)
 	# frame = cv.UMat(frame)
 	# Hacemos los colores oscuros claros
 	# return cv.hconcat([frame, img]) # # DEBUG
@@ -94,24 +93,28 @@ def tracker(frame):
 
 
 if __name__ == "__main__":
-	# Prueba de las funciones (Archivo usado como libreria)
+	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Tracker"
-	Config.fullscreen(titulo)
-	guardar = True
+	Config.Fullscreen(titulo)
 	out = None
-	if guardar:
-		from Config import VideoProp
-		out = cv.VideoWriter("Salida.avi", VideoProp.fourcc,
-							VideoProp.fps, VideoProp.resolu)
+	if Config.VidProp.guardar:
+		from Config import VidProp
+		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
+            	        	VidProp.fps, VidProp.resolu)
 	cap = cv.VideoCapture("Samples/vtest.avi")
 
 	while cap.isOpened():
 		ret, frame = cap.read()
 		img, objetivos = tracker(frame)
+		if not ret: break
+		Utiles.dibuja_contornos(img, objetivos)
 		cv.imshow(titulo, img)
-		if guardar:
+		if Config.VidProp.guardar:
 			out.write(img)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break
 	cv.waitKey(0)
+	cap.release()
+	out.release()
+
