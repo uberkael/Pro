@@ -1,3 +1,7 @@
+##################################################
+# Tracker de movimiento por sustraccion de fondo #
+##################################################
+
 import cv2 as cv
 import numpy as np
 import Utiles
@@ -55,60 +59,56 @@ def extrae_contornos(frame):
 	return contornos
 
 
-def identifica_objetivos(frame, contornos):
+def identifica_objetivos(contornos):
 	"""
-	Identifica objetivos, segun su ratio (personas depie)
 	Sera sustituido por una red neuronal
+	Identifica objetivos,
+	Segun su area y segun su ratio (personas depie)
 	"""
+	nuevos_contornos = []
 	for c in contornos:
 		# Elminamos las areas pequeñas
 		area = cv.contourArea(c)
 		if area > 100:
-			# Dibujamos el contorno
-			cv.drawContours(frame, [c], 0, Config.UI.rojo_claro, 1)
-			# Calculamos el rectangulo que contiene el elemento
-			peri = cv.arcLength(c, True)
-			# Pinta un rectangulo con su centro
-			approx = cv.approxPolyDP(c, 0.02*peri, True)
-			x, y, w, h = cv.boundingRect(approx)
-			cv.rectangle(frame, (x, y), (x+w, y+h), Config.UI.rojo_oscuro, 1)
-			cv.circle(frame, (x+w//2, y+h//2), 2, Config.UI.cyan, 0)
-			# Pinta el centro del contorno
-			M = cv.moments(c)
-			cX = int(M["m10"] / M["m00"])
-			cY = int(M["m01"] / M["m00"])
-			cv.circle(frame, (cX, cY), 1, (255, 255, 0), 0)
+			# Los agrega a la lista
+			nuevos_contornos.append(c)
+	return nuevos_contornos
 
 
 def tracker(frame):
+	"""
+	Funcion principal, extrae objetivos de los objetos en movimiento
+	Devuelve el frame pintado y una lista de contornos de objetivos
+	"""
 	img = eliminador_fondo(frame)
 	contornos = extrae_contornos(img)
 	# identifica_objetivos(img, contornos)
 	# OpenCV GPU
 	img = cv.UMat(frame)
-	identifica_objetivos(img, contornos)
+	objetivos = identifica_objetivos(contornos)
+	Utiles.dibuja_contornos(img, objetivos)
 	# frame = cv.UMat(frame)
 	# Hacemos los colores oscuros claros
 	# return cv.hconcat([frame, img]) # # DEBUG
-	return img
+	return img, objetivos
 
 
 if __name__ == "__main__":
 	# Prueba de las funciones (Archivo usado como libreria)
+	titulo = "Tracker"
+	Config.fullscreen(titulo)
 	guardar = True
+	out = None
 	if guardar:
-		fourcc = cv.VideoWriter_fourcc(*"VP80")
-		fps = 25
-		resolu = (768, 576)
-		out = cv.VideoWriter("Salida.avi", fourcc, fps, resolu)
+		from Config import VideoProp
+		out = cv.VideoWriter("Salida.avi", VideoProp.fourcc,
+							VideoProp.fps, VideoProp.resolu)
 	cap = cv.VideoCapture("Samples/vtest.avi")
-	cv.namedWindow("Tracker", cv.WINDOW_NORMAL)
-	cv.setWindowProperty("Tracker", cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
 
 	while cap.isOpened():
 		ret, frame = cap.read()
-		img = tracker(frame)
-		cv.imshow("Tracker", img)
+		img, objetivos = tracker(frame)
+		cv.imshow(titulo, img)
 		if guardar:
 			out.write(img)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):

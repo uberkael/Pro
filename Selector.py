@@ -1,3 +1,7 @@
+#######################################################################
+# Selector de orden de objetivos empezando por el centro de la imagen #
+#######################################################################
+
 import cv2 as cv
 import numpy as np
 import Utiles
