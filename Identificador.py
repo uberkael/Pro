@@ -38,7 +38,7 @@ if __name__ == "__main__":
 		if img.shape[0] > 0:
 			cv.imshow(titulo, img)
 			if Config.VidProp.guardar:
-				out.write(img)
+				Utiles.guardar(out, img)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break

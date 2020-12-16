@@ -4,6 +4,14 @@ import tensorflow as tf
 import Config
 
 
+def guardar(out, img):
+	"Guarda un video"
+	h, w, z = img.get().shape
+	wc, hc = Config.VidProp.resolu
+	if wc != w or hc != h:
+		img = cv.resize(img, (1280, 720))
+	out.write(img)
+
 def dimensiones_video(cap):
 	"Devuelve las dimensioones x e y de un video"
 	return (cap.get(cv.CAP_PROP_FRAME_WIDTH), cap.get(cv.CAP_PROP_FRAME_HEIGHT))

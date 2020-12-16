@@ -95,7 +95,7 @@ def tracker(frame):
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Tracker"
-	Config.Fullscreen(titulo)
+	# Config.Fullscreen(titulo)
 	out = None
 	if Config.VidProp.guardar:
 		from Config import VidProp
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 		Utiles.dibuja_contornos(img, objetivos)
 		cv.imshow(titulo, img)
 		if Config.VidProp.guardar:
-			out.write(img)
+			Utiles.guardar(out, img)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break

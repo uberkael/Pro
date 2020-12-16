@@ -36,7 +36,7 @@ def search_destroy(frame):
 
 if __name__ == "__main__":
 	titulo = "Torreta"
-	Config.Fullscreen(titulo)
+	# Config.Fullscreen(titulo)
 	out = None
 	# Para capturar la salida
 	if Config.VidProp.guardar:
@@ -53,8 +53,7 @@ if __name__ == "__main__":
 		img = search_destroy(frame)
 		cv.imshow(titulo, img)
 		if Config.VidProp.guardar:
-			img = cv.resize(img, (1280, 720))
-			out.write(img)
+			Utiles.guardar(out, img)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break

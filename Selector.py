@@ -13,11 +13,11 @@ def organiza_objetivos(dims, lista_p):
 	"""Devuelve una lista de objetivos en ordenados segun su distancia mutua
 	comenzando por el centro"""
 	# DEBUG
-	global num_obj_max
-	tam = len(lista_p)
-	if tam > num_obj_max:
-		num_obj_max = tam
-		print(num_obj_max)
+	# global num_obj_max
+	# tam = len(lista_p)
+	# if tam > num_obj_max:
+	# 	num_obj_max = tam
+	# 	print(num_obj_max)
 	# DEBUG
 	ctr_x, ctr_y = Utiles.punto_centro(dims)
 	centro = np.array((ctr_x, ctr_y))
