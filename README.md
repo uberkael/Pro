@@ -1,2 +1,2 @@
-# Torreta para TFG, WIP
-## Utiliza OpenCV, Keras, TensorFlow
+## Torreta para TFG, WIP
+Utiliza OpenCV, Keras, TensorFlow
