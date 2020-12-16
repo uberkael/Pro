@@ -1,3 +1,7 @@
+###################################
+# Funciones de  proposito general #
+###################################
+
 import numpy as np
 import cv2 as cv
 import tensorflow as tf
@@ -6,10 +10,18 @@ import Config
 
 def guardar(out, img):
 	"Guarda un video"
+	# Si no usa la GPU lo trasnforma en UMat para usarla
+	# if(isinstance(img, (np.ndarray))):
+	if(not isinstance(img, cv.UMat)):
+		img = cv.UMat(img)
+	# Extrae el size
 	h, w, z = img.get().shape
 	wc, hc = Config.VidProp.resolu
+	# Si la resolucion del frame no es la requerida la cambia
 	if wc != w or hc != h:
-		img = cv.resize(img, (1280, 720))
+		print('resize')
+		img = cv.resize(img, (wc, hc))
+	# Escribe en el archivo
 	out.write(img)
 
 def dimensiones_video(cap):

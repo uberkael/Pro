@@ -115,6 +115,6 @@ if __name__ == "__main__":
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break
 	cv.waitKey(0)
+	if Config.VidProp.guardar: out.release()
 	cap.release()
-	out.release()
 

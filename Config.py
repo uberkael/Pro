@@ -27,7 +27,8 @@ class VidProp():
 	fourcc = cv.VideoWriter_fourcc(*"FFV1")
 	fps = 20
 	# resolu = (768, 576)
-	resolu = (1280, 720)
+	# resolu = (1280, 720)
+	resolu = (2240, 224)
 	guardar = True
 
 
