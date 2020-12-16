@@ -1,13 +1,7 @@
 import cv2 as cv
 import numpy as np
-
-
-class UI():
-	rojo_claro = (66, 69, 255)
-	rojo_oscuro = (56, 72, 153)
-	rojo_oscuro2 = (25, 28, 67)
-	cyan = (245, 235, 157)
-
+import Utiles
+import Config
 
 # MOG
 fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
@@ -15,8 +9,6 @@ fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
 # fgbg = cv.createBackgroundSubtractorMOG2(detectShadows=False)
 # KNN
 # fgbg = cv.createBackgroundSubtractorKNN(detectShadows=False)
-
-
 
 
 def eliminador_fondo(frame):
@@ -27,15 +19,14 @@ def eliminador_fondo(frame):
 	# Desenfocamos
 	img = cv.blur(img, (3, 3))
 	# _, img = cv.threshold(img, 100, 255, cv.THRESH_BINARY_INV)
-	# cv.imshow("fondo ant", img)
-	# Muy lento
+	# cv.imshow("fondo ant", img) # DEBUG
 	img = cv.adaptiveThreshold(
 		img, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, 71, 50)
 	# Aplica el sustractor de fondos
 	fgmask = fgbg.apply(img)
 	# Aplica la mascara para ver solo el cambio
 	img = cv.bitwise_and(img, img, mask=fgmask)
-	# cv.imshow("fondo", img)
+	# cv.imshow("fondo", img) # DEBUG
 	img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
 	return img
 
@@ -74,14 +65,14 @@ def identifica_objetivos(frame, contornos):
 		area = cv.contourArea(c)
 		if area > 100:
 			# Dibujamos el contorno
-			cv.drawContours(frame, [c], 0, UI.rojo_claro, 1)
+			cv.drawContours(frame, [c], 0, Config.UI.rojo_claro, 1)
 			# Calculamos el rectangulo que contiene el elemento
 			peri = cv.arcLength(c, True)
 			# Pinta un rectangulo con su centro
 			approx = cv.approxPolyDP(c, 0.02*peri, True)
 			x, y, w, h = cv.boundingRect(approx)
-			cv.rectangle(frame, (x, y), (x+w, y+h), UI.rojo_oscuro, 1)
-			cv.circle(frame, (x+w//2, y+h//2), 2, UI.cyan, 0)
+			cv.rectangle(frame, (x, y), (x+w, y+h), Config.UI.rojo_oscuro, 1)
+			cv.circle(frame, (x+w//2, y+h//2), 2, Config.UI.cyan, 0)
 			# Pinta el centro del contorno
 			M = cv.moments(c)
 			cX = int(M["m10"] / M["m00"])
@@ -93,15 +84,17 @@ def tracker(frame):
 	img = eliminador_fondo(frame)
 	contornos = extrae_contornos(img)
 	# identifica_objetivos(img, contornos)
+	# OpenCV GPU
 	img = cv.UMat(frame)
 	identifica_objetivos(img, contornos)
 	# frame = cv.UMat(frame)
 	# Hacemos los colores oscuros claros
-	# return cv.hconcat([frame, img])
+	# return cv.hconcat([frame, img]) # # DEBUG
 	return img
 
 
 if __name__ == "__main__":
+	# Prueba de las funciones (Archivo usado como libreria)
 	guardar = True
 	if guardar:
 		fourcc = cv.VideoWriter_fourcc(*"VP80")
@@ -114,9 +107,6 @@ if __name__ == "__main__":
 
 	while cap.isOpened():
 		ret, frame = cap.read()
-		print("Width:", cap.get(cv.CAP_PROP_FRAME_WIDTH))
-		print("Height:", cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-		print("Fps:", cap.get(cv.CAP_PROP_FPS))
 		img = tracker(frame)
 		cv.imshow("Tracker", img)
 		if guardar:
@@ -124,5 +114,4 @@ if __name__ == "__main__":
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == ord('q')):
 			break
-
-cv.waitKey(0)
+	cv.waitKey(0)
