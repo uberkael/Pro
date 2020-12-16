@@ -95,13 +95,13 @@ def tracker(frame):
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Tracker"
-	# Config.Fullscreen(titulo)
+	Config.Fullscreen(titulo)
 	out = None
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
             	        	VidProp.fps, VidProp.resolu)
-	cap = cv.VideoCapture("Samples/vtest.avi")
+	cap = cv.VideoCapture(Config.VidProp.source)
 
 	while cap.isOpened():
 		ret, frame = cap.read()

@@ -98,7 +98,7 @@ def ROI_to_img(frame, ROI):
 
 
 def dibuja_ROIs(frame, ROIs):
-	"Genera una imagen con varias ROI"
+	"Auxiliar, no usada en main, Genera una imagen con varias ROI"
 	# Pintamos n ROI
 	n = 10
 	res = np.array([])

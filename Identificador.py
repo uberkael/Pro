@@ -20,15 +20,16 @@ if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	import cv2 as cv # Solo para DEBUG
 	titulo = "Identificador"
-	# Config.Fullscreen(titulo)
+	Config.Fullscreen(titulo)
 	out = None
 	# Para capturar la salida
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
 							VidProp.fps, VidProp.resolu)
+		#print(out.get(2)) # TODO
 	# Abre el video y almacena las dimesiones
-	cap = cv.VideoCapture("Samples/vtest.avi")
+	cap = cv.VideoCapture(Config.VidProp.source)
 	dims = Utiles.dimensiones_video(cap)
 
 	while cap.isOpened():

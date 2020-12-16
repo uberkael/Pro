@@ -36,7 +36,7 @@ def search_destroy(frame):
 
 if __name__ == "__main__":
 	titulo = "Torreta"
-	# Config.Fullscreen(titulo)
+	Config.Fullscreen(titulo)
 	out = None
 	# Para capturar la salida
 	if Config.VidProp.guardar:
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
                     		VidProp.fps, VidProp.resolu)
 	# Abre el video y almacena las dimesiones
-	cap = cv.VideoCapture("Samples/vtest.avi")
+	cap = cv.VideoCapture(Config.VidProp.source)
 	dims = Utiles.dimensiones_video(cap)
 
 	while cap.isOpened():

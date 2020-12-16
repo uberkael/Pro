@@ -21,15 +21,16 @@ class UI():
 
 class VidProp():
 	"Clase para la configuracion de video de salida"
+	source = "Samples/vtest.avi"
 	# fourcc = cv.VideoWriter_fourcc(*"VP80")
 	# fourcc = cv.VideoWriter_fourcc(*"VP90")
 	# fourcc = cv.VideoWriter_fourcc(*"LAGS")
 	fourcc = cv.VideoWriter_fourcc(*"FFV1")
 	fps = 20
 	# resolu = (768, 576)
-	# resolu = (1280, 720)
-	resolu = (2240, 224)
-	guardar = True
+	resolu = (1280, 720)
+	mobilenet_10 = (2240, 224)
+	guardar = False
 
 
 class DNN():
