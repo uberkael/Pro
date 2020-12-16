@@ -21,7 +21,7 @@ class UI():
 
 class VidProp():
 	"Clase para la configuracion de video de salida"
-	source = "Samples/vtest.avi"
+	source = "vtest.avi"
 	# fourcc = cv.VideoWriter_fourcc(*"VP80")
 	# fourcc = cv.VideoWriter_fourcc(*"VP90")
 	# fourcc = cv.VideoWriter_fourcc(*"LAGS")
