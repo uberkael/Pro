@@ -3,6 +3,12 @@
 ###########################################################
 
 import cv2 as cv
+import tensorflow as tf
+
+
+def debug_off():
+	"Elimina los mensajes de warning de CUDA con tensorflow"
+	tf.get_logger().setLevel('ERROR')
 
 
 class UI():
@@ -43,4 +49,5 @@ def Fullscreen(win_name):
 	"Configura el programa para fullscreen"
 	cv.namedWindow(win_name, cv.WINDOW_NORMAL)
 	cv.setWindowProperty(win_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
+
 

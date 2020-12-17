@@ -19,10 +19,10 @@ def guardar(out, img):
 	wc, hc = Config.VidProp.resolu
 	# Si la resolucion del frame no es la requerida la cambia
 	if wc != w or hc != h:
-		print('resize')
 		img = cv.resize(img, (wc, hc))
 	# Escribe en el archivo
 	out.write(img)
+
 
 def dimensiones_video(cap):
 	"Devuelve las dimensioones x e y de un video"
@@ -93,43 +93,20 @@ def genera_ROIs(contornos):
 
 
 def ROI_to_img(frame, ROI):
+	"Devuelve una imagen que contiene solo la Region de Interes"
 	x, y, w, h = ROI
 	return frame[y:y+h, x:x+w]
 
 
-def dibuja_ROIs(frame, ROIs):
-	"Auxiliar, no usada en main, Genera una imagen con varias ROI"
-	# Pintamos n ROI
-	n = 10
-	res = np.array([])
-	i = 0
-	for roi in ROIs:
-		#  Pinta solo 5 imagnes
-		if i == n: break
-		img = ROI_to_img(frame, roi)
-		img = preproceso(img)
-		img = np.uint8(img)
-		res = np.hstack([res, img]) if len(res) > 1 else img
-		i += 1
-	# Completa con negro la imagen hasta la resolucion
-	if i != n and len(res.shape) == 3:
-		# print((Config.DNN.img_size*n)-res.shape[1])
-		img = np.zeros(
-			[Config.DNN.img_size, Config.DNN.img_size*n-res.shape[1], 3],
-			dtype='uint8')
-		res = np.hstack([res, img])
-	return res
+def dibuja_predic(frame, ROIs, predicciones):
+	"Escribe la prediccion mas popular encima  del objetivo"
+	if len(ROIs) != len(predicciones):
+		print(f"Error, no iguales: {len(ROIs)} {len(predicciones)}")
+		return
+	#Recorre cada region
+	for r, p in zip(ROIs, predicciones):
+		# Extrae el texto de la prediccion
+		text = p[0][1]
+		cv.putText(frame, text,
+			(r[0]+5, r[1]-5), 0, 1, Config.UI.morado, 1, 16)
 
-
-def preproceso(image):
-	"""
-	Funcion de preprocesado de imagenes para usar con MobileNet3
-	Modificado sin labels de format_example()
-	https://colab.research.google.com/drive/1ZZXnCjFEOkp_KdNcNabd14yok0BAIuwS
-	"""
-	image = tf.cast(image, tf.float32)
-	image = tf.image.resize(image, (Config.DNN.img_size, Config.DNN.img_size))
-	# image = vgg16.preprocess_input(image)
-	# label = tf.one_hot(tf.cast(label, tf.int32), 2)
-	# label = tf.cast(label, tf.float32)
-	return image

@@ -9,8 +9,6 @@ import Selector
 import Utiles
 import Config
 
-dims = (0, 0)
-
 
 def objetivos_centros(objetivos):
 	"Devuelve los centros de los objetivos"
@@ -36,6 +34,7 @@ def search_destroy(frame):
 
 if __name__ == "__main__":
 	titulo = "Torreta"
+	dims = (0, 0)
 	Config.Fullscreen(titulo)
 	out = None
 	# Para capturar la salida
