@@ -57,7 +57,7 @@ def preproceso(img):
 
 
 def dibuja_ROIs(frame, ROIs):
-	"Auxiliar, no usada en main, Genera una imagen con varias ROI"
+	"Auxiliar, para DEBUG, Genera una imagen con varias ROI"
 	# Pintamos n ROI
 	n = 10
 	res = np.array([])
