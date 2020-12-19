@@ -99,7 +99,7 @@ if __name__ == "__main__":
 	out = None
 	if Config.VidProp.guardar:
 		from Config import VidProp
-		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
+		out = cv.VideoWriter(f"Salida/{titulo}.avi", VidProp.fourcc,
             	        	VidProp.fps, VidProp.resolu)
 	cap = cv.VideoCapture(Config.VidProp.source)
 

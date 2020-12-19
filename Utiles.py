@@ -107,6 +107,7 @@ def dibuja_predic(frame, ROIs, predicciones):
 	for r, p in zip(ROIs, predicciones):
 		# Extrae el texto de la prediccion
 		text = p[0][1]
+		x, y, w, h = r
 		cv.putText(frame, text,
-			(r[0]+5, r[1]-5), 0, 1, Config.UI.morado, 1, 16)
-
+			(x+5, y-5), 0, 1, Config.UI.morado, 1, 16)
+		cv.rectangle(frame, (x, y), (x+w, y+h), Config.UI.rojo_oscuro, 1)

@@ -40,7 +40,7 @@ if __name__ == "__main__":
 	# Para capturar la salida
 	if Config.VidProp.guardar:
 		from Config import VidProp
-		out = cv.VideoWriter(f"Salida {titulo}.avi", VidProp.fourcc,
+		out = cv.VideoWriter(f"Salida/{titulo}.avi", VidProp.fourcc,
                     		VidProp.fps, VidProp.resolu)
 	# Abre el video y almacena las dimesiones
 	cap = cv.VideoCapture(Config.VidProp.source)
