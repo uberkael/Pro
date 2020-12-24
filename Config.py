@@ -27,7 +27,8 @@ class UI():
 
 class VidProp():
 	"Clase para la configuracion de video de salida"
-	source = "vtest.avi"
+	source = "Entrada/vtest.avi"
+	# source = "Entrada/vtest.avi"
 	# fourcc = cv.VideoWriter_fourcc(*"VP80")
 	# fourcc = cv.VideoWriter_fourcc(*"VP90")
 	# fourcc = cv.VideoWriter_fourcc(*"LAGS")
@@ -37,17 +38,37 @@ class VidProp():
 	resolu = (1280, 720)
 	mobilenet_10 = (2240, 224)
 	guardar = False
+	show_fps = True
 
 
 class DNN():
 	"Parametros para las redes neuronales"
-	img_size = 224
+	# img_size = 224
+	img_size = 416
 	img_margen = 25
+	gpu = True
+	archivo_modelo = ""
+	archivo_pesos = ""
+	# modelo = "YoLo"
+	modelo = "MobileNet"
+	archivo_labels = 'Modelos/coco.names'
+
+	class YoLo():
+		archivo_modelo = 'Modelos/yolov3.cfg'
+		archivo_pesos = 'Modelos/yolov3.weights'
+
+	class YoLo_tiny():
+		archivo_modelo = 'Modelos/yolov3-tiny.cfg'
+		archivo_pesos = 'Modelos/yolov3-tiny.weights'
+
+	class MobileNet():
+		size = (300, 300)
+		archivo_modelo = 'Modelos/mobilenet.caffemodel'
+		archivo_prototxt = 'Modelos/mobilenet.prototxt'
 
 
 def Fullscreen(win_name):
 	"Configura el programa para fullscreen"
 	cv.namedWindow(win_name, cv.WINDOW_NORMAL)
 	cv.setWindowProperty(win_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
-
 

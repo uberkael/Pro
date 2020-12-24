@@ -46,7 +46,7 @@ def dibuja_path(img, lista_p):
 	"Dibuja el path a seguir por la torreta entre distintos objetivos"
 	anterior = np.array([])
 	for punto in lista_p:
-		if anterior.any():
+		if anterior.size == punto.size:
 			cv.arrowedLine(img, (anterior[0], anterior[1]),
 							(punto[0], punto[1]), Config.UI.rojo, 2,
 							tipLength=0.05)

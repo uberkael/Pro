@@ -1,5 +1,5 @@
 ###################################################################
-# Sistema de envio y recepcion simple para envia_arrayr arrays de numpy #
+# Sistema de envio y recepcion simple para enviar arrays de numpy #
 ###################################################################
 
 import socket

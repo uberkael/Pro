@@ -106,8 +106,20 @@ def dibuja_predic(frame, ROIs, predicciones):
 	#Recorre cada region
 	for r, p in zip(ROIs, predicciones):
 		# Extrae el texto de la prediccion
+		print(p)
 		text = p[0][1]
 		x, y, w, h = r
 		cv.putText(frame, text,
 			(x+5, y-5), 0, 1, Config.UI.morado, 1, 16)
 		cv.rectangle(frame, (x, y), (x+w, y+h), Config.UI.rojo_oscuro, 1)
+
+
+def dibuja_FPS(image, fps):
+	"Dibuja los FPS para comparar"
+	fps.update()
+	fps.stop()
+	# print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
+	text = "FPS: {:.2f}".format(fps.fps())
+	# text = "Hola que haces"
+	cv.putText(image, text, (0, 15),
+            cv.FONT_HERSHEY_SIMPLEX, 0.5, Config.UI.rojo, 2)

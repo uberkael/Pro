@@ -4,6 +4,7 @@
 
 import cv2 as cv
 import numpy as np
+from imutils.video import FPS
 import Utiles
 import Config
 
@@ -15,10 +16,10 @@ fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
 # fgbg = cv.createBackgroundSubtractorKNN(detectShadows=False)
 
 
-def eliminador_fondo(frame):
+def eliminador_fondo(image):
 	"Elimina el fondo para hacer tracking"
 	# OpenCV GPU
-	img = cv.UMat(frame)
+	img = cv.UMat(image)
 	img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 	# Desenfocamos
 	img = cv.blur(img, (3, 3))
@@ -35,10 +36,10 @@ def eliminador_fondo(frame):
 	return img
 
 
-def extrae_contornos(frame):
+def extrae_contornos(image):
 	"Devuelve una lista de contornos exteriores de los objetivos"
 	# Pasamos a gris
-	img = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+	img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 	# Desenfocamos
 	img = cv.blur(img, (3, 3))
 	# Aplicamos un apertura para eliminar pequeños movimientos
@@ -75,44 +76,46 @@ def identifica_objetivos(contornos):
 	return nuevos_contornos
 
 
-def tracker(frame):
+def tracker(image):
 	"""
 	Funcion principal, extrae objetivos de los objetos en movimiento
 	Devuelve el frame pintado y una lista de contornos de objetivos
 	"""
-	img = eliminador_fondo(frame)
+	img = eliminador_fondo(image)
 	contornos = extrae_contornos(img)
 	# identifica_objetivos(img, contornos)
 	# OpenCV GPU
-	img = cv.UMat(frame)
+	img = cv.UMat(image)
 	objetivos = identifica_objetivos(contornos)
-	# frame = cv.UMat(frame)
+	# image = cv.UMat(image)
 	# Hacemos los colores oscuros claros
-	# return cv.hconcat([frame, img]) # # DEBUG
+	# return cv.hconcat([image, img]) # # DEBUG
 	return img, objetivos
 
 
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Tracker"
-	Config.Fullscreen(titulo)
+	# Config.Fullscreen(titulo)
 	out = None
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida/{titulo}.avi", VidProp.fourcc,
             	        	VidProp.fps, VidProp.resolu)
 	cap = cv.VideoCapture(Config.VidProp.source)
+	fps = FPS().start()
 
 	while cap.isOpened():
-		ret, frame = cap.read()
-		img, objetivos = tracker(frame)
+		ret, image = cap.read()
+		image, objetivos = tracker(image)
 		if not ret: break
-		Utiles.dibuja_contornos(img, objetivos)
-		cv.imshow(titulo, img)
+		Utiles.dibuja_contornos(image, objetivos)
+		if Config.VidProp.show_fps: Utiles.dibuja_FPS(image, fps)
+		cv.imshow(titulo, image)
 		if Config.VidProp.guardar:
-			Utiles.guardar(out, img)
+			Utiles.guardar(out, image)
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
-		if (cv.waitKey(1) & 0xFF == ord('q')):
+		if (cv.waitKey(1) & 0xFF == 27):
 			break
 	cv.waitKey(0)
 	if Config.VidProp.guardar: out.release()
