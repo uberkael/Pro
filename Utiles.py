@@ -122,4 +122,59 @@ def dibuja_FPS(image, fps):
 	text = "FPS: {:.2f}".format(fps.fps())
 	# text = "Hola que haces"
 	cv.putText(image, text, (0, 15),
-            cv.FONT_HERSHEY_SIMPLEX, 0.5, Config.UI.rojo, 2)
+			cv.FONT_HERSHEY_SIMPLEX, 0.5, Config.UI.rojo, 2)
+
+
+def multi_atencion_blur(image, rectangulos):
+	# Config
+	img = image.copy()
+	kernel = (47, 47)
+	# Imagen blur total
+	img_soslayo = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+	img_soslayo = cv.GaussianBlur(img_soslayo, kernel, 0)
+	img_soslayo = cv.cvtColor(img_soslayo, cv.COLOR_GRAY2BGR)
+
+	# Creacion de mascara
+	mascara = np.full_like(img_soslayo, 255)
+	# Rellena de los rectangulos
+	for rect in rectangulos:
+		x, y, w, h = rect
+		x1, y1, x2, y2 = x, y, x+w, y+h
+		cv.rectangle(mascara, (x1, y1), (x2, y2), [0], cv.FILLED)
+	mascara = cv.GaussianBlur(mascara, kernel, 0)
+
+	# cv.imshow('Imagen centro de atencion', mascara)
+	# img[np.where(mascara == 255)] = img_soslayo[np.where(mascara == 255)]
+
+	return alphaBlend(img, img_soslayo, mascara)
+
+def atencion_blur(image, rect):
+	# x1, y1, x2, y2 = rect
+	x, y, w, h = rect
+	x1, y1, x2, y2 = x, y, x+w, y+h
+	kernel = (47, 47)
+	img = image.copy()
+
+	img_soslayo = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+	img_soslayo = cv.GaussianBlur(img_soslayo, kernel, 0)
+	img_soslayo = cv.cvtColor(img_soslayo, cv.COLOR_GRAY2BGR)
+
+	mascara = np.full_like(img_soslayo, 255)
+	cv.rectangle(mascara, (x1, y1), (x2, y2), [0], cv.FILLED)
+	mascara = cv.GaussianBlur(mascara, kernel, 0)
+
+	# cv.imshow('Imagen centro de atencion', mascara)
+	# img[np.where(mascara == 255)] = img_soslayo[np.where(mascara == 255)]
+
+	return alphaBlend(img, img_soslayo, mascara)
+
+
+def alphaBlend(img1, img2, mask):
+	# https://stackoverflow.com/a/48274875/3052862
+	"alphaBlend img1 and img 2 (of CV_8UC3) with mask (CV_8UC1 or CV_8UC3)"
+	if mask.ndim == 3 and mask.shape[-1] == 3:
+		alpha = mask/255.0
+	else:
+		alpha = cv.cvtColor(mask, cv.COLOR_GRAY2BGR)/255.0
+	blended = cv.convertScaleAbs(img1*(1-alpha) + img2*alpha)
+	return blended

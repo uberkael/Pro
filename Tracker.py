@@ -33,6 +33,8 @@ def eliminador_fondo(image):
 	img = cv.bitwise_and(img, img, mask=fgmask)
 	# cv.imshow("fondo", img) # DEBUG
 	img = cv.cvtColor(img, cv.COLOR_GRAY2BGR)
+	# Vuelve a una matriz normal no GPU
+	img = cv.UMat.get(img)
 	return img
 
 
@@ -60,7 +62,7 @@ def extrae_contornos(image):
 	return contornos
 
 
-def identifica_objetivos(contornos):
+def elimina_irrelevantes(contornos):
 	"""
 	Sera sustituido por una red neuronal
 	Identifica objetivos,
@@ -86,7 +88,7 @@ def tracker(image):
 	# identifica_objetivos(img, contornos)
 	# OpenCV GPU
 	img = cv.UMat(image)
-	objetivos = identifica_objetivos(contornos)
+	objetivos = elimina_irrelevantes(contornos)
 	# image = cv.UMat(image)
 	# Hacemos los colores oscuros claros
 	# return cv.hconcat([image, img]) # # DEBUG

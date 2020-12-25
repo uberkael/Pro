@@ -15,35 +15,46 @@ from tensorflow.keras import datasets, layers, models
 from imutils.video import FPS
 import Utiles
 import Config
-import Tracker
 
 
-def genera_predicciones(modelo, layer_names, labels, image, confidence):
+def prediccion(image, modelo, capas_conexion, labels):
 	height, width = image.shape[:2]
 	image = cv.UMat(image)
 	# Create a blob and pass it through the model
 	blob = cv.dnn.blobFromImage(
 		image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
 	modelo.setInput(blob)
-	outputs = modelo.forward(layer_names)
+	outputs = modelo.forward(capas_conexion)
 
 	# Extract bounding boxes, confidences and classIDs
-	ROIs, predicciones, tipos = genera_ROIs(
-		outputs, confidence, width, height)
+	rects, probabilidades, tipos = genera_predicciones(outputs, width, height, labels)
+	rects, probabilidades, tipos = elimina_nonmax(rects, probabilidades, tipos)
 
+	return [rects, probabilidades, tipos]
+
+
+def elimina_nonmax(rects, probabilidades, tipos):
 	# Apply Non-Max Suppression
 	# Elimina las detecciones no maximas
+	confidence = Config.DNN.umbral_confianza
 	threshold = 0.3
-	idxs = cv.dnn.NMSBoxes(ROIs, predicciones, confidence, threshold)
+	res_rects = []
+	res_probabilidades = []
+	res_tipos = []
+	idxs = cv.dnn.NMSBoxes(rects, probabilidades, confidence, threshold)
+	if len(idxs) > 0:
+		for i in idxs.flatten():
+			res_rects.append(rects[i])
+			res_probabilidades.append(probabilidades[i])
+			res_tipos.append(tipos[i])
+	return res_rects, res_probabilidades, res_tipos
 
-	return ROIs, predicciones, tipos, idxs
 
-
-def genera_ROIs(outputs, umbral, width, height):
+def genera_predicciones(outputs, width, height, labels):
+	"Genera preddiciones en base a un umbral de confianza"
 	ROIs = []
 	predicciones = []
 	tipos = []
-
 	for output in outputs:
 		for detection in output:
 			# Extract the scores, classid, and the confidence of the prediction
@@ -52,7 +63,7 @@ def genera_ROIs(outputs, umbral, width, height):
 			confidence = scores[classID]
 
 			# Consider only the predictions that are above the confidence threshold
-			if confidence > umbral:
+			if confidence > Config.DNN.umbral_confianza:
 				# Scale the bounding box back to the size of the image
 				box = detection[0:4] * np.array([width, height, width, height])
 				centerX, centerY, w, h = box.astype('int')
@@ -63,29 +74,37 @@ def genera_ROIs(outputs, umbral, width, height):
 
 				ROIs.append([x, y, int(w), int(h)])
 				predicciones.append(float(confidence))
-				tipos.append(classID)
-
+				tipos.append(labels[classID])
 	return ROIs, predicciones, tipos
 
 
-def dibuja_ROIs(ROIs, predicciones, tipos, idxs):
+def dibuja_ROIs(image, ROIs):
 	"Auxiliar, para DEBUG, Genera una imagen con varias ROI"
-	global image
-	if len(idxs) > 0:
-		for i in idxs.flatten():
-			dibuja_ROI(ROIs[i], tipos[i], predicciones[i])
+	# img = cv.UMat(image)
+	# for rect, probabilidad, tipo in ROIs:
+	rects, probabilidades, tipos = ROIs
+	for rect, probabilidad, tipo in zip(rects, probabilidades, tipos):
+		image = dibuja_ROI(image, rect, probabilidad, tipo)
+	return image
 
 
-def dibuja_ROI(ROI, indice, confianza):
+def dibuja_ROI(image, rect, probabilidad, tipo):
 	# extract bounding box coordinates
-	x, y, w, h = ROI
-
+	x, y, w, h = rect
 	# color = [int(c) for c in colores[tipos[i]]]
-	color = colores[indice]
+	# color = colores[tipo]
+	color = Config.UI.rojo
 	cv.rectangle(image, (x, y), (x + w, y + h), color, 2)
-	text = "{}: {:.4f}".format(labels[indice], confianza)
-	cv.putText(image, text, (x, y - 5),
-            cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+	text = "{}: {:.4f}".format(tipo, probabilidad)
+	cv.putText(image, text, (x, y - 5), cv.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+	return image
+
+
+def capas_desconectadas(modelo):
+	"Devuelve las capas para conectar al modelo DNN"
+	capas = modelo.getLayerNames()
+	capas = [capas[i[0] - 1] for i in modelo.getUnconnectedOutLayers()]
+	return capas
 
 
 def genera_DNN():
@@ -121,7 +140,7 @@ if __name__ == "__main__":
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida/{titulo}.avi",
-                       VidProp.fourcc, VidProp.fps, VidProp.resolu)
+							VidProp.fourcc, VidProp.fps, VidProp.resolu)
 		# print(out.get(2)) # TODO
 	# Abre el video y almacena las dimesiones
 	cap = cv.VideoCapture(Config.VidProp.source)
@@ -130,12 +149,12 @@ if __name__ == "__main__":
 	# Crea la red neural
 	modelo = genera_DNN()
 
-	# Extrae las capas de YoLo
-	layer_names = modelo.getLayerNames()
-	layer_names = [layer_names[i[0] - 1]
-                for i in modelo.getUnconnectedOutLayers()]
+	# Extrae layers principales de YoLo
+	capas_conexion = capas_desconectadas(modelo)
+
 	labels = genera_labels()
 	colores = genera_colores(labels)
+
 	fps = FPS().start()
 
 	while cap.isOpened():
@@ -144,12 +163,9 @@ if __name__ == "__main__":
 			print('Video file finished.')
 			break
 
-		umbral_confianza = 0.5
-		ROIs, predicciones, tipos, idxs = genera_predicciones(
-			modelo, layer_names, labels, image, umbral_confianza)
+		ROIs = prediccion(image, modelo, capas_conexion)
 
-		image = cv.UMat(image)
-		dibuja_ROIs(ROIs, predicciones, tipos, idxs)
+		image = dibuja_ROIs(image, ROIs)
 
 		if Config.VidProp.show_fps:
 			Utiles.dibuja_FPS(image, fps)
@@ -158,9 +174,7 @@ if __name__ == "__main__":
 		if (cv.waitKey(1) & 0xFF == 27):
 			break
 
-		if Config.VidProp.guardar:
-			Utiles.guardar(out, image)
+		if Config.VidProp.guardar: Utiles.guardar(out, image)
 
 	cap.release()
-	if Config.VidProp.guardar:
-		out.release()
+	if Config.VidProp.guardar: out.release()

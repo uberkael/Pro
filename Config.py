@@ -4,6 +4,7 @@
 
 import cv2 as cv
 import tensorflow as tf
+from enum import Enum
 
 
 def debug_off():
@@ -41,11 +42,17 @@ class VidProp():
 	show_fps = True
 
 
+class Modo(Enum):
+	deteccion = 0
+	search_destroy = 1
+
+
 class DNN():
 	"Parametros para las redes neuronales"
 	# img_size = 224
 	img_size = 416
 	img_margen = 25
+	umbral_confianza = 0.5
 	gpu = True
 	archivo_modelo = ""
 	archivo_pesos = ""
