@@ -32,7 +32,7 @@ def dimensiones_video(cap):
 def punto_centro(dim):
 	"Devuelve el centro de unas dimensiones 2D"
 	w, h = dim[0], dim[1]
-	return (w//2, h//2)
+	return np.array([w//2, h//2])
 
 
 def distancia(a, b):
@@ -42,9 +42,56 @@ def distancia(a, b):
 	# return math.sqrt(dif.x*dif.x + dif.y*dif.y)
 
 
+def cerca(p_actual, punto):
+	"Devuelve un booleano si esta lo suficientemente cerca"
+	return True if(distancia(p_actual, punto) < 6) else False
+
+
 def gen_p_aleatorios(num_puntos, dims):
-	"Genera n puntos aleatorios entre unas dimensiones (mejor cuadrados)"
-	return np.random.randint(0, min(dims[0], dims[1]), (num_puntos, 2))
+	"Genera n puntos aleatorios entre unas dimensiones"
+	# Para cuadrado
+	# return np.random.randint(0, min(dims[0], dims[1]), (num_puntos, 2))
+	# Para rectangulo
+	return np.random.randint(0, (dims[1], dims[0]), (num_puntos, 2))
+	# h = np.random.randint(0, dims[0], (num_puntos, 1))
+	# w = np.random.randint(0, dims[1], (num_puntos, 1))
+	# var = [list(x) for x in zip(w, h)]
+	# var = np.array(var)
+	# return var
+
+
+def dibuja_puntos(imagen, lista_p, destruidos=False):
+	"Dibuja los puntos en la imagen"
+	img = imagen.copy()
+	for i, punto in enumerate(lista_p):
+		if destruidos:
+			cv.circle(img, (punto[0], punto[1]), 5, Config.UI.lima, 3)
+			cv.putText(img, str(i),
+				(punto[0]+5, punto[1]-5), 0, 1, Config.UI.lima, 2)
+		else:
+			cv.circle(img, (punto[0], punto[1]), 5, Config.UI.cyan2, 3)
+			cv.putText(img, str(i),
+				(punto[0]+5, punto[1]-5), 0, 1, Config.UI.rojo_claro, 1, 16)
+	return img
+
+
+def dibuja_mira(img, p_actual):
+	"Dibuja una mira en la imagen"
+	imagen = img.copy()
+	cv.drawMarker(imagen, (p_actual[0], p_actual[1]), (0, 255, 0),
+					cv.MARKER_CROSS, 20)
+	return imagen
+
+
+def dibuja_path(img, lista_p):
+	"Dibuja el path a seguir por la torreta entre distintos objetivos"
+	anterior = np.array([])
+	for punto in lista_p:
+		if anterior.size == punto.size:
+			cv.arrowedLine(img, (anterior[0], anterior[1]),
+							(punto[0], punto[1]), Config.UI.rojo, 2,
+							tipLength=0.05)
+		anterior = punto
 
 
 def dibuja_contornos(frame, contornos):

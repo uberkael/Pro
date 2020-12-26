@@ -38,8 +38,8 @@ class VidProp():
 	# resolu = (768, 576)
 	resolu = (1280, 720)
 	mobilenet_10 = (2240, 224)
-	guardar = False
 	show_fps = True
+	guardar = False
 
 
 class Modo(Enum):
@@ -78,4 +78,3 @@ def Fullscreen(win_name):
 	"Configura el programa para fullscreen"
 	cv.namedWindow(win_name, cv.WINDOW_NORMAL)
 	cv.setWindowProperty(win_name, cv.WND_PROP_FULLSCREEN, cv.WINDOW_FULLSCREEN)
-

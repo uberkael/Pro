@@ -57,7 +57,7 @@ def search_destroy(image):
 	# img, objetivos = Tracker.tracker(image)
 	# p_objetivos = centros_de_contornos(objetivos)
 	# orden_objetivos = Selector.organiza_objetivos(dims, p_objetivos)
-	Selector.dibuja_path(img, orden_objetivos)
+	Utiles.dibuja_path(img, orden_objetivos)
 	# Selector.dibuja_puntos(img, orden_objetivos)
 	# Utiles.dibuja_contornos(img, objetivos)
 	return img
@@ -69,8 +69,8 @@ def search_destroy_antiguo(image):
 	img, objetivos = Tracker.tracker(image)
 	p_objetivos = centros_de_contornos(objetivos)
 	orden_objetivos = Selector.organiza_objetivos(dims, p_objetivos)
-	Selector.dibuja_path(img, orden_objetivos)
-	Selector.dibuja_puntos(img, orden_objetivos)
+	Utiles.dibuja_path(img, orden_objetivos)
+	Utiles.dibuja_puntos(img, orden_objetivos)
 	Utiles.dibuja_contornos(img, objetivos)
 	return img
 

@@ -9,6 +9,7 @@ import Config
 
 num_obj_max = 0
 
+
 def organiza_objetivos(dims, lista_p):
 	"""Devuelve una lista de objetivos en ordenados segun su distancia mutua
 	comenzando por el centro"""
@@ -19,8 +20,7 @@ def organiza_objetivos(dims, lista_p):
 	# 	num_obj_max = tam
 	# 	print(num_obj_max)
 	# DEBUG
-	ctr_x, ctr_y = Utiles.punto_centro(dims)
-	centro = np.array((ctr_x, ctr_y))
+	centro = Utiles.punto_centro(dims)
 
 	orden_objetivos = []
 	objetivo_anterior = centro
@@ -33,26 +33,6 @@ def organiza_objetivos(dims, lista_p):
 	return np.array(orden_objetivos)
 
 
-def dibuja_puntos(img, lista_p):
-	"Dibuja los puntos de los objetivos ordeandos y su orden numerico"
-	for i, punto in enumerate(lista_p):
-		# cv.circle(img, (punto[0], punto[1]), 5, Config.UI.cyan2, 3)
-		# cv.putText(img, str(i), (punto[0]+5, punto[1]-5), 0, 1, Config.UI.lima, 2)
-		cv.putText(img, str(i),
-			(punto[0]+5, punto[1]-5), 0, 1, Config.UI.rojo_claro, 1, 16)
-
-
-def dibuja_path(img, lista_p):
-	"Dibuja el path a seguir por la torreta entre distintos objetivos"
-	anterior = np.array([])
-	for punto in lista_p:
-		if anterior.size == punto.size:
-			cv.arrowedLine(img, (anterior[0], anterior[1]),
-							(punto[0], punto[1]), Config.UI.rojo, 2,
-							tipLength=0.05)
-		anterior = punto
-
-
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Selector"
@@ -63,7 +43,6 @@ if __name__ == "__main__":
 	dims = (img.shape[0], img.shape[1])
 	orden_objetivos = organiza_objetivos(dims, lista_p)
 	dibuja_path(img, orden_objetivos)
-	dibuja_puntos(img, orden_objetivos)
+	img = Utiles.dibuja_puntos(img, orden_objetivos)
 	cv.imshow(titulo, img)
 	cv.waitKey(0)
-
