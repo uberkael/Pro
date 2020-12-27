@@ -62,9 +62,8 @@ def extrae_contornos(image):
 	return contornos
 
 
-def elimina_irrelevantes(contornos):
+def elimina_contornos_irrelevantes(contornos, area_min=100):
 	"""
-	Sera sustituido por una red neuronal
 	Identifica objetivos,
 	Segun su area y segun su ratio (personas depie)
 	"""
@@ -72,7 +71,7 @@ def elimina_irrelevantes(contornos):
 	for c in contornos:
 		# Elminamos las areas pequeñas
 		area = cv.contourArea(c)
-		if area > 100:
+		if area > area_min:
 			# Los agrega a la lista
 			nuevos_contornos.append(c)
 	return nuevos_contornos
@@ -88,7 +87,7 @@ def tracker(image):
 	# identifica_objetivos(img, contornos)
 	# OpenCV GPU
 	img = cv.UMat(image)
-	objetivos = elimina_irrelevantes(contornos)
+	objetivos = elimina_contornos_irrelevantes(contornos)
 	# image = cv.UMat(image)
 	# Hacemos los colores oscuros claros
 	# return cv.hconcat([image, img]) # # DEBUG

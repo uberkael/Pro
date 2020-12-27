@@ -12,6 +12,11 @@ def debug_off():
 	tf.get_logger().setLevel('ERROR')
 
 
+class Modo(Enum):
+	deteccion = 0
+	search_destroy = 1
+
+
 class UI():
 	"Clase para el aspecto de la interfaz colores basados en CyberPunk 2077"
 	verde = (0, 255, 0)
@@ -34,17 +39,28 @@ class VidProp():
 	# fourcc = cv.VideoWriter_fourcc(*"VP90")
 	# fourcc = cv.VideoWriter_fourcc(*"LAGS")
 	fourcc = cv.VideoWriter_fourcc(*"FFV1")
-	fps = 20
+	fps = 10
 	# resolu = (768, 576)
 	resolu = (1280, 720)
 	mobilenet_10 = (2240, 224)
-	show_fps = True
-	guardar = False
+	show_fps = False
+	guardar = True
 
 
-class Modo(Enum):
-	deteccion = 0
-	search_destroy = 1
+class Tracker():
+	"Clase para los parametros de confianza Tracker"
+	# Area minima para eliminar ruido de contornos
+	area_min = 100
+	# Tolerancia para comparar areas del objetivo actual y los propuestos
+	tolerancia = 0.25
+
+
+class Motor():
+	"Clase para los parametros del movimiento Torreta"
+	# Distancia de movimiento en pixeles
+	mov = 20
+	# Distancia de disparo minima
+	d_disp = 10
 
 
 class DNN():

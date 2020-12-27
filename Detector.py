@@ -163,7 +163,7 @@ if __name__ == "__main__":
 			print('Video file finished.')
 			break
 
-		ROIs = prediccion(image, modelo, capas_conexion)
+		ROIs = prediccion(image, modelo, capas_conexion, labels)
 
 		image = dibuja_ROIs(image, ROIs)
 

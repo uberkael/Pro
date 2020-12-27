@@ -9,25 +9,27 @@ import Config
 import Selector
 
 
-def centra_objectivo(p_actual, punto):
+def desplazamiento(p_actual, punto):
 	"Mueve la torreta hacia el punto"
 	dist = np.array([punto])
 	dist = punto - p_actual
-	dist[dist > 4] = 4
-	dist[dist < (-4)] = -4
+	mov = Config.Motor.mov
+	dist[dist > mov] = mov
+	dist[dist < (-mov)] = -mov
 	p_actual = p_actual + dist
 	return p_actual
 
 
-def disparo():
-	global orden_objetivos
-	global objetivos_destruidos
+def disparo(orden_objetivos, objetivos_destruidos):
 	"Dispara cuando esta cerca del objetivo"
 	objetivos_destruidos.append(orden_objetivos[0])
+	# print(orden_objetivos.shape)
 	orden_objetivos = orden_objetivos[1:]
+	return orden_objetivos
 
 
 def imagen_punteada(img, orden_objetivos, objetivos_destruidos):
+	"Mockup, dibuja los puntos objetivo y los eliminados"
 	if (len(orden_objetivos) > 0):
 		img = Utiles.dibuja_puntos(img, orden_objetivos)
 	if (len(objetivos_destruidos) > 0):
@@ -40,20 +42,19 @@ if __name__ == "__main__":
 	titulo = "Motor Mockup"
 	num_puntos = 50
 	w, h = Config.VidProp.resolu
-	dims_img = [h, w, 3]
-	img = np.zeros(dims_img, np.uint8)
+	img = np.zeros([h, w, 3], np.uint8)
 	dims = [img.shape[1], img.shape[0]]
 
 	# Para capturar la salida
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida/{titulo}.avi", VidProp.fourcc,
-				VidProp.fps, VidProp.resolu)
+							VidProp.fps, VidProp.resolu)
 
-	lista_p = Utiles.gen_p_aleatorios(num_puntos, (dims_img[0], dims_img[1]))
-	orden_objetivos = Selector.organiza_objetivos(dims, lista_p)
-	objetivos_destruidos = []
+	lista_p = Utiles.gen_p_aleatorios(num_puntos, (h, w))
 	p_actual = Utiles.punto_centro(dims)
+	orden_objetivos = Selector.organiza_objetivos(p_actual, lista_p)
+	objetivos_destruidos = []
 
 	imagen = imagen_punteada(img, orden_objetivos, objetivos_destruidos)
 	Utiles.dibuja_mira(imagen, p_actual)
@@ -65,12 +66,12 @@ if __name__ == "__main__":
 			break
 		image = img.copy()
 		cerca = Utiles.cerca(p_actual, orden_objetivos[0])
-		if(cerca):
-			disparo()
+		if cerca:
+			orden_objetivos = disparo(orden_objetivos, objetivos_destruidos)
 			image = cv.putText(image, "Bang!",
 					(p_actual[0]+5, p_actual[1]-5), 0, 1, Config.UI.rojo, 2, 16)
 		image = imagen_punteada(image, orden_objetivos, objetivos_destruidos)
-		p_actual = centra_objectivo(p_actual, orden_objetivos[0])
+		p_actual = desplazamiento(p_actual, orden_objetivos[0])
 		image = Utiles.dibuja_mira(image, p_actual)
 		Utiles.dibuja_path(image, orden_objetivos)
 		if Config.VidProp.guardar:
