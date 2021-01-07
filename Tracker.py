@@ -7,6 +7,7 @@ import numpy as np
 from imutils.video import FPS
 import Utiles
 import Config
+import Selector
 
 # MOG
 fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
@@ -17,7 +18,7 @@ fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
 
 
 def eliminador_fondo(image):
-	"Elimina el fondo para hacer tracking"
+	"Elimina el fondo para hacer tracking utilizando MOG y adaptative Threshold"
 	# OpenCV GPU
 	img = cv.UMat(image)
 	img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -39,7 +40,7 @@ def eliminador_fondo(image):
 
 
 def extrae_contornos(image):
-	"Devuelve una lista de contornos exteriores de los objetivos"
+	"Devuelve una lista de contornos exteriores de los objetivos de la imagen"
 	# Pasamos a gris
 	img = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
 	# Desenfocamos
@@ -62,11 +63,8 @@ def extrae_contornos(image):
 	return contornos
 
 
-def elimina_contornos_irrelevantes(contornos, area_min=100):
-	"""
-	Identifica objetivos,
-	Segun su area y segun su ratio (personas depie)
-	"""
+def elimina_contornos_irrelevantes(contornos, area_min=Config.Tracker.area_min):
+	"""Elimina los contornos con un area inferior a un umbral"""
 	nuevos_contornos = []
 	for c in contornos:
 		# Elminamos las areas pequeñas
@@ -75,6 +73,30 @@ def elimina_contornos_irrelevantes(contornos, area_min=100):
 			# Los agrega a la lista
 			nuevos_contornos.append(c)
 	return nuevos_contornos
+
+
+def actualiza_objetivo(objetivo, objetivos):
+	"Actualiza el objetivo si se mueve"
+	# No hay nuevos objetivos, nos quedamos con el que se detecto
+	if(len(objetivos) < 1):
+		return objetivo
+	# Elimina las detecciones del tracker con area muy distinta del objetivo
+	x, y, w, h = objetivo
+	area_objetivo = w * h
+	rectangulos = Utiles.genera_rectangulos(objetivos)
+	rectangulos = Utiles.elimina_rect_irelevantes(rectangulos, area_objetivo)
+	# Los objetivos no eran suficientemente similares en area
+	if(len(rectangulos) < 1):
+		return objetivo
+	# Cambia el objetivo por el mas cercano detectado por el tracker
+	distancia_max = max(w, h)
+	p_objetivo = Utiles.centro_rectangulo(objetivo)
+	objetivo_alt = Selector.objetivo_prioritario(p_objetivo, rectangulos,
+		distancia_max)
+	if(len(objetivo_alt) > 0):
+		return objetivo_alt
+	# No habia un objetivo lo suficientemete cercano
+	return objetivo
 
 
 def tracker(image):
@@ -102,14 +124,14 @@ if __name__ == "__main__":
 	if Config.VidProp.guardar:
 		from Config import VidProp
 		out = cv.VideoWriter(f"Salida/{titulo}.avi", VidProp.fourcc,
-            	        	VidProp.fps, VidProp.resolu)
+							VidProp.fps, VidProp.resolu)
 	cap = cv.VideoCapture(Config.VidProp.source)
 	fps = FPS().start()
 
 	while cap.isOpened():
 		ret, image = cap.read()
-		image, objetivos = tracker(image)
 		if not ret: break
+		image, objetivos = tracker(image)
 		Utiles.dibuja_contornos(image, objetivos)
 		if Config.VidProp.show_fps: Utiles.dibuja_FPS(image, fps)
 		cv.imshow(titulo, image)
@@ -118,7 +140,6 @@ if __name__ == "__main__":
 		# if (cv.waitKey(40) & 0xFF == ord('q')):
 		if (cv.waitKey(1) & 0xFF == 27):
 			break
-	cv.waitKey(0)
 	if Config.VidProp.guardar: out.release()
 	cap.release()
 
