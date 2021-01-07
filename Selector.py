@@ -24,6 +24,20 @@ def organiza_objetivos(p_actual, lista_p):
 	return np.array(orden_objetivos)
 
 
+def objetivo_prioritario(punto, objetivos, distancia_max=0):
+	"""Devuelve el objetivo prioritario segun la distancia a la posicion actual
+	de la torreta"""
+	puntos_centro = Utiles.centros_rectangulos(objetivos)
+	objetivo_anterior = punto
+	distancias = [Utiles.distancia(x, objetivo_anterior) for x in puntos_centro]
+	menor = np.argmin(distancias)
+	# Si el punto mas cercano esta lo suficientemente cerca no se devuelve nada
+	if distancia_max and np.min(distancias) > distancia_max:
+		return np.array([])
+	return objetivos[menor]
+	# return objetivos[menor], puntos_centro[menor]
+
+
 if __name__ == "__main__":
 	# DEBUG Prueba de las funciones (No se usara, Archivo usado como libreria)
 	titulo = "Selector"
