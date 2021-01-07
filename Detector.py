@@ -18,6 +18,10 @@ import Config
 
 
 def prediccion(image, modelo, capas_conexion, labels):
+	"""Devuelve una lista de rectangulos ROI, las probabilidades y los tipos
+	como entradas contiene el modelo de red neuronal
+	las capas de conexion con la red (solo para el caso de yolo)
+	y las etiquetas de cada clase posible"""
 	height, width = image.shape[:2]
 	image = cv.UMat(image)
 	# Create a blob and pass it through the model
@@ -34,8 +38,7 @@ def prediccion(image, modelo, capas_conexion, labels):
 
 
 def elimina_nonmax(rects, probabilidades, tipos):
-	# Apply Non-Max Suppression
-	# Elimina las detecciones no maximas
+	"Elimina las detecciones no maximas de la deteccion SSD"
 	confidence = Config.DNN.umbral_confianza
 	threshold = 0.3
 	res_rects = []
