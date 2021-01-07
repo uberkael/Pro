@@ -10,7 +10,8 @@ import Selector
 
 
 def desplazamiento(p_actual, punto):
-	"Mueve la torreta hacia el punto"
+	"""Mueve la torreta hacia el punto, de forma limitada segun Config
+	En la implementacion real debe actuar sobre dos motores"""
 	dist = np.array([punto])
 	dist = punto - p_actual
 	mov = Config.Motor.mov
@@ -21,7 +22,8 @@ def desplazamiento(p_actual, punto):
 
 
 def disparo(orden_objetivos, objetivos_destruidos):
-	"Dispara cuando esta cerca del objetivo"
+	"""Dispara cuando esta cerca del objetivo, debería activar un interruptor
+	En la implementacion real debe activar el disparo (relay o puso)"""
 	objetivos_destruidos.append(orden_objetivos[0])
 	# print(orden_objetivos.shape)
 	orden_objetivos = orden_objetivos[1:]

@@ -29,6 +29,7 @@ class servidor():
 			self.s.bind(('', PUERTO))
 
 	def recibe_array(self):
+		"Recibe un array y lo desempaqueta, "
 		data, address = self.s.recvfrom(4096)
 		print(pickle.loads(data))
 		# print(data.decode())
