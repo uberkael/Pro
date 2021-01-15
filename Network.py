@@ -17,6 +17,7 @@ class cliente():
 		self.s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
 	def envia_array(self, datos):
+		"Envia datos serializados a broadcast"
 		# self.s.sendto(datos.encode(), ('255.255.255.255', PUERTO))
 		self.s.sendto(pickle.dumps(datos), ('255.255.255.255', PUERTO))
 
@@ -29,7 +30,7 @@ class servidor():
 			self.s.bind(('', PUERTO))
 
 	def recibe_array(self):
-		"Recibe un array y lo desempaqueta, "
+		"Recibe un array y lo desempaqueta"
 		data, address = self.s.recvfrom(4096)
 		print(pickle.loads(data))
 		# print(data.decode())
