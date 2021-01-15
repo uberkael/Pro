@@ -8,6 +8,8 @@ import tensorflow as tf
 import Config
 
 
+# Funciones de video y dibujo:
+
 def guardar(out, image):
 	"""Simplifica la forma de guardar un video en el disco duro
 	Extrae las opciones de video desde Config
@@ -35,8 +37,7 @@ def dimensiones_video(cap):
 
 def dibuja_FPS(image, fps):
 	"""Dibuja los FPS en la imagen para comparar rendimientos
-	Parametros: <fps> un objeto imutils.video.FPS
-	"""
+	Parametros: <fps> un objeto imutils.video.FPS"""
 	fps.update()
 	fps.stop()
 	# print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
@@ -52,11 +53,18 @@ def ROI_to_img(frame, roi):
 	x, y, w, h = roi
 	return frame[y:y+h, x:x+w]
 
+# Funciones de trigonometría:
 
 def punto_centro(dim):
 	"Devuelve el centro de unas dimensiones 2D"
 	w, h = dim[0], dim[1]
 	return np.array([w//2, h//2])
+
+
+def posicion_relativa(a, b):
+	"""Devuelve la posicion relativa de un punto respecto a otro
+	Se utiliza para calcular la posición respecto a la mira"""
+	return np.array([abs(a[0]-b[0]), abs(a[1]-b[1])])
 
 
 def centros_rectangulos(rectangulos):
@@ -175,8 +183,7 @@ def dibuja_contornos(image, contornos):
 	El centro del contorno,
 	Un rectangulo alrededor,
 	El centro del rectangulo que rodea el contorno
-	Utiliza dibuja_rectangulo() como funcion auxiliar
-	"""
+	Utiliza dibuja_rectangulo() como funcion auxiliar"""
 	for c in contornos:
 		# Dibuja el contorno
 		cv.drawContours(image, [c], 0, Config.UI.rojo_claro, 1)
@@ -214,6 +221,7 @@ def dibuja_predic(image, ROIs, predicciones):
 					(x+5, y-5), 0, 1, Config.UI.morado, 1, 16)
 		cv.rectangle(image, (x, y), (x+w, y+h), Config.UI.rojo_oscuro, 1)
 
+# Efectos especiales para la imagen
 
 def multi_atencion_blur(image, rectangulos):
 	""" Difumina toda la escena y  la cambia a blanco y negro excepto algunos
