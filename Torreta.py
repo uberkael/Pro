@@ -110,6 +110,13 @@ if __name__ == "__main__":
 	cap = cv.VideoCapture(Config.VidProp.source)
 	dims = Utiles.dimensiones_video(cap)
 
+	# Modo de operacion
+	modo = Config.Modo.deteccion
+	# Variables importantes para el modo torreta
+	objetivos_destruidos = []
+	objetivos = []
+	objetivo = []
+
 	# Setup DNN
 	# Crea la red neural
 	modelo = Detector.genera_DNN()
@@ -117,14 +124,6 @@ if __name__ == "__main__":
 	capas_conexion = Detector.capas_desconectadas(modelo)
 	labels = Detector.genera_labels()
 	colores = Detector.genera_colores(labels)
-
-	# Modo de operacion
-	modo = Config.Modo.deteccion
-	# Variables importantes para el modo torreta
-	# TODO agregar la lista
-	objetivos_destruidos = []
-	objetivos = []
-	objetivo = []
 
 	# Posicion de la torreta
 	p_actual = Utiles.punto_centro(dims)
