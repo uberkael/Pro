@@ -4,6 +4,7 @@
 
 import cv2 as cv
 import tensorflow as tf
+import serial
 from enum import Enum
 
 
@@ -30,18 +31,19 @@ class UI():
 
 class VidProp():
 	"Clase con parametros para la configuracion de video de salida"
+	# source = 0
 	source = "Entrada/vtest.avi"
-	# source = "Entrada/vtest.avi"
 	# fourcc = cv.VideoWriter_fourcc(*"VP80")
 	# fourcc = cv.VideoWriter_fourcc(*"VP90")
 	# fourcc = cv.VideoWriter_fourcc(*"LAGS")
 	fourcc = cv.VideoWriter_fourcc(*"FFV1")
-	fps = 6
+	# fps = 6
+	fps = 12
 	# resolu = (768, 576)
 	resolu = (1280, 720)
 	mobilenet_10 = (2240, 224)
 	show_fps = False
-	guardar =
+	guardar = False
 
 
 class Tracker():
@@ -60,6 +62,18 @@ class Motor():
 	mov = 20
 	# Distancia de disparo minima
 	d_disp = 10
+	# Equivalencia steps motor - pixeles video
+	# pixeles_a_step = 10
+	pixeles_a_step = 1
+
+
+class Serial():
+	"Clase para los parametros de la conexion serial"
+	baudrate = 115200
+	parity = serial.PARITY_ODD
+	stopbits = serial.STOPBITS_ONE
+	bytesize = serial.EIGHTBITS
+
 
 
 class DNN():
