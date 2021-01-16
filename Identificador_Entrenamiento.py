@@ -1,5 +1,8 @@
+from matplotlib.pyplot import tight_layout
+
+
 ###########################################################
-# Identificador univoco de obejetivos con red siamesa SNN #
+# Entrena una red Mobilenet con los objetivos que tenemos #
 ###########################################################
 # Utiliza Mobilenetv2 como red preentrenada
 # https://www.pyimagesearch.com/2020/11/30/siamese-networks-with-keras-tensorflow-and-deep-learning/
