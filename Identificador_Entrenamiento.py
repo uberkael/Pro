@@ -49,6 +49,7 @@ def genera_DNN():
 		metrics=['accuracy'])
 	return modelo
 
+
 def entrena_DNN(modelo, datos):
 	"Entrena el modelo con los datos para los objetivos"
 	modelo.fit(x=datos, epochs=10, verbose=2)
@@ -58,19 +59,10 @@ def entrena_DNN(modelo, datos):
 def data_preprocesado():
 	"Genera con los objetivos"
 	path = "Entrada/Objetivos"
+	tam = Config.DNN.MobileNet.img_size
 	return ImageDataGenerator(
 		preprocessing_function=mobilenet.preprocess_input).flow_from_directory(
-		directory=path, target_size=(224, 224), batch_size=10, shuffle=True)
-
-
-def preproceso(frame):
-	"""Devuelve una imagen preprocesada para ser procesada por la DNN"""
-	tama = Config.DNN.MobileNet.img_size
-	frame['image'] = tf.cast(frame['image'], tf.float32)
-	frame['image'] = tf.image.resize(frame['image'], (tama, tama))
-	frame['image'] = mobilenet.preprocess_input(frame['image'])
-	return frame['image']
-
+		directory=path, target_size=(tam, tam), batch_size=10, shuffle=True)
 
 
 if __name__ == "__main__":
