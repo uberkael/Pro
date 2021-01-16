@@ -2,14 +2,13 @@
 # Identificador univoco de obejetivos con red siamesa SNN #
 ###########################################################
 # Utiliza Mobilenetv2 como red preentrenada
-#https://www.pyimagesearch.com/2020/11/30/siamese-networks-with-keras-tensorflow-and-deep-learning/
+# https://www.pyimagesearch.com/2020/11/30/siamese-networks-with-keras-tensorflow-and-deep-learning/
 from tensorflow.python.keras.api import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tensorflow.keras.applications.mobilenet as mobilenet
 # from tensorflow.keras.applications import imagenet_utils
 import tensorflow.keras.backend as K
 import Config
-
 
 
 def capa_distancia_euclidea(vectors):
