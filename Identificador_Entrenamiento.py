@@ -3,25 +3,13 @@
 ###########################################################
 # Utiliza Mobilenetv2 como red preentrenada
 #https://www.pyimagesearch.com/2020/11/30/siamese-networks-with-keras-tensorflow-and-deep-learning/
-
-import numpy as np
-import tensorflow as tf
-import cv2 as cv
 from tensorflow.python.keras.api import keras
-from tensorflow.keras import datasets, layers, models
-from imutils.video import FPS
-import Utiles
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import tensorflow.keras.applications.mobilenet as mobilenet
+# from tensorflow.keras.applications import imagenet_utils
+import tensorflow.keras.backend as K
 import Config
 
-from tensorflow.keras.datasets import mnist
-import tensorflow.keras.applications.mobilenet as mobilenet
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import imagenet_utils
-from imutils import build_montages
-
-import tensorflow.keras.backend as K
-import matplotlib.pyplot as plt
-import numpy as np
 
 
 def capa_distancia_euclidea(vectors):
