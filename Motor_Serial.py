@@ -39,9 +39,11 @@ def disparo(orden_objetivos, objetivos_destruidos):
 def conexion_serial():
 	"Genera una conexion serial para la comunicacion"
 	plist = list_ports.comports()
+	print(plist[0][0])
 	print(plist[-1][0])
 	return serial.Serial(
-			port=plist[-1][0],  # El ultimo de la lista
+			# port=plist[0][0],  # El ultimo de la lista
+            port=plist[-1][0],  # El ultimo de la lista
 			baudrate=Config.Serial.baudrate,
 			parity=Config.Serial.parity,
 			stopbits=Config.Serial.stopbits,
