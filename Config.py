@@ -75,10 +75,13 @@ class Serial():
 	bytesize = serial.EIGHTBITS
 
 
+class Network():
+	puerto = 5555
+	archivo_forzado = "Entrada/Objetivos/Persona Vaqueros Joven/Objetivo 577.png"
+
 
 class DNN():
 	"Parametros para las distintas redes neuronales"
-	# img_size = 224
 	img_size = 416
 	img_margen = 25
 	umbral_confianza = 0.5
@@ -88,6 +91,9 @@ class DNN():
 	# modelo = "YoLo"
 	modelo = "MobileNet"
 	archivo_labels = 'Modelos/coco.names'
+	etiquetas_entrenadas = ['Coche', 'Furgoneta', 'Persona Anorak',
+	'Persona Azul', 'Persona Cuero', 'Persona Negro', 'Persona Negro Mujer',
+	'Persona Rojo', 'Persona Vaqueros Joven', 'Persona Vaqueros Mayor']
 
 	class YoLo():
 		"Parametos para una red de detección completa YoLov3"
@@ -101,9 +107,12 @@ class DNN():
 
 	class MobileNet():
 		"Parametos para una red de detección completa MobileNet V1"
+		img_size = 224
 		size = (300, 300)
 		archivo_modelo = 'Modelos/mobilenet.caffemodel'
 		archivo_prototxt = 'Modelos/mobilenet.prototxt'
+
+
 
 
 # Funciones para configurar el programa
