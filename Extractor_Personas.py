@@ -20,8 +20,7 @@ import Detector
 
 def guardar_ROIs():
 	"""Guarda las imagenes de las personas en la carpeta de salida
-	Utiliza un closure como contardor
-	"""
+	Utiliza un closure como contador """
 	contador = 0
 
 	def closure(image, ROIs):
