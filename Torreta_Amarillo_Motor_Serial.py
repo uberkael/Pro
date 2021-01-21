@@ -37,6 +37,8 @@ def getContours(imgFilter, imgOriginal):
 			cv.circle(img_contour, (x+w//2, y+h//2),
 							10, (255, 0, 0), cv.FILLED)
 	cv.imshow(titulo, img_contour)
+	if Config.VidProp.guardar:
+		Utiles.guardar(out, img_contour)
 	punto = [x+w//2, y+h//2]
 	return Utiles.posicion_relativa(punto, mira)
 
@@ -88,6 +90,6 @@ if __name__ == "__main__":
 			pass
 		contador += 1
 		# Espera la pulsacion de una tecla q y sale
-		if (cv.waitKey(1) & 0xFF == ord('q')):
+		if (cv.waitKey(1) & 0xFF == 27):
 			Motor.desplazamiento(arduino, [0, 0])
 			break
