@@ -1,6 +1,8 @@
 ## Torreta para TFG, WIP
 Utiliza OpenCV, Keras, TensorFlow
+
 Los ejemplos usan vtest.avi los samples de OpenCV:
+
 https://github.com/opencv/opencv/tree/master/samples/data
 
 
