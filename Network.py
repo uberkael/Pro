@@ -6,9 +6,7 @@ import socket
 import sys
 import numpy as np
 import pickle
-
-PUERTO = 5555
-
+import Config
 
 class cliente():
 	"Clase que crea un socket de envio"
@@ -18,8 +16,10 @@ class cliente():
 
 	def envia_array(self, datos):
 		"Envia datos serializados a broadcast"
-		# self.s.sendto(datos.encode(), ('255.255.255.255', PUERTO))
-		self.s.sendto(pickle.dumps(datos), ('255.255.255.255', PUERTO))
+		# self.s.sendto(datos.encode(),
+		# ('255.255.255.255', Config.Network.puerto))
+		self.s.sendto(pickle.dumps(datos),
+			('255.255.255.255', Config.Network.puerto))
 
 
 class servidor():
@@ -27,7 +27,7 @@ class servidor():
 	def __init__(self, servidor=True):
 		self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		if servidor:
-			self.s.bind(('', PUERTO))
+			self.s.bind(('', Config.Network.puerto))
 
 	def recibe_array(self):
 		"Recibe un array y lo desempaqueta"
@@ -37,6 +37,14 @@ class servidor():
 		# m = self.s.recv(4096)
 		# print(pickle.loads(m))
 		# print(m)
+
+
+def is_port_in_use(port):
+	"Devuelve si el puerto esta siendo utilizado"
+	# Funcion extraida de
+	# https://stackoverflow.com/a/52872579/3052862
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+		return s.connect_ex(('localhost', port)) == 0
 
 
 if __name__ == "__main__":
