@@ -27,6 +27,8 @@ def organiza_objetivos(p_actual, lista_p):
 def objetivo_prioritario(punto, objetivos, distancia_max=0):
 	"""Devuelve el objetivo prioritario segun la distancia a la posicion actual
 	de la torreta"""
+	if(len(objetivos) < 1):
+		return None
 	puntos_centro = Utiles.centros_rectangulos(objetivos)
 	objetivo_anterior = punto
 	distancias = [Utiles.distancia(x, objetivo_anterior) for x in puntos_centro]
