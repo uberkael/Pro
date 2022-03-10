@@ -1,16 +1,17 @@
-## Torreta para TFG, WIP
-Utiliza OpenCV, Keras, TensorFlow
+## Turret for TFG, WIP
+Uses OpenCV, Keras, TensorFlow
 
-Los ejemplos usan vtest.avi los samples de OpenCV:
+[![Watch the video](https://user-images.githubusercontent.com/1783926/157646401-28d2a554-774d-4c1d-9182-05d790c8471e.png))](https://www.youtube.com/watch?v=BJktdagZycY&list=PLRJeA9mWojhM3NrH4dd95zC_1LiJiCUgS&index=24)
 
+The examples uses vtest.avi from OpenCV:
 https://github.com/opencv/opencv/tree/master/samples/data
 
 
-para instalar en un virtual environment de python:
+Installing in a python virtual environment:
 
   python -m venv venv
   python -m pip install -r requeriments.txt
 
-Uso:
+Use:
   python Torreta.py
 
